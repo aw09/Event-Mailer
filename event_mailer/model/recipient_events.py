@@ -1,10 +1,12 @@
-from app import db
+from ..config import db
+from sqlalchemy.orm import relationship
+from sqlalchemy import Column, ForeignKey, Integer, Table
 
-class RecipientEvent(db.Model):
+class RecipientEvents(db.Model):
     __tablename__ = 'recipient_events'
-    recipient_id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.Integer, primary_key=True)
-    recipient = db.relationship("Recipient", foreign_keys=[recipient_id])
+    recipient_id = Column(Integer, db.ForeignKey("recipients.id"),  primary_key=True)
+    event_id = Column(Integer, primary_key=True)
+    recipient = relationship("Recipients", foreign_keys=[recipient_id])
 
     def __init__(self, recipient_id, event_id):
         self.recipient_id = recipient_id
