@@ -1,7 +1,7 @@
-from flask import request
+from flask import request, jsonify
 
-from .config import app, db
-from .model.emails import Emails
+from .config import app, db, q
+from .model import Emails, serialize
 from datetime import datetime
 
 @app.route("/")
@@ -21,10 +21,19 @@ def save_emails():
         email_subject=email_subject,
         email_content=email_content,
         timestamp=datetime.strptime(timestamp, '%m/%d/%y %H:%M:%S')
-
     )
     db.session.add(new_email)
     db.session.commit()
+    db.session.refresh(new_email)
 
-    # TODO: Add to queue
+    # Add to queue
+    q.put((new_email.timestamp, new_email.id, new_email))
+
     return "Success"
+
+with app.app_context():
+    from threading import Thread
+    from .emailer import run_schedule
+
+    thread = Thread(target = run_schedule, args=(app,))
+    thread.start()
