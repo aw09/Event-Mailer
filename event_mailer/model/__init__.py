@@ -9,4 +9,3 @@ def serialize(model):
     columns = [c.key for c in class_mapper(model.__class__).columns]
     dict_model = {c: getattr(model, c) for c in columns}
     return dict_model
-    return json.loads(json.dumps(dict_model, default=str))

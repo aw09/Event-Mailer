@@ -1,18 +1,37 @@
 import time
 from datetime import datetime
 import pytz
-
+import yagmail
+import os
+from dotenv import load_dotenv
 
 def run_schedule(app):
+    load_dotenv()
+
+    SENDER_EMAIL = os.getenv('SENDER_EMAIL')
+    OAUTH_FILE = os.getenv('OAUTH_FILE')
+
     with app.app_context():
         from .model import Emails, Recipients, RecipientEvents, serialize
         from .config import db, q
 
         def send_email(email):
-            print(f"Send Email {serialize(email)}")
+            receivers = db.session.query(Recipients.email).join(RecipientEvents).filter(
+                RecipientEvents.recipient_id == Recipients.id,
+                RecipientEvents.event_id == email.event_id).all()
+            receivers = [i[0] for i in receivers]
+
+            yag = yagmail.SMTP(SENDER_EMAIL, oauth2_file=OAUTH_FILE)
+            for receiver in receivers:
+                yag.send(receiver,email.email_subject , email.email_content)
+
+            email.sent = True
+            db.session.commit()
+
+
 
         def run():
-            emails = db.session.query(Emails).all()
+            emails = db.session.query(Emails).filter(Emails.sent == False).all()
 
             # Add the emails and timestamps to the queue
             for email in emails:
