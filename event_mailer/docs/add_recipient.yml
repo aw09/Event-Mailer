@@ -1,0 +1,15 @@
+summary: 'Add a recipient'
+description: 'Add a new recipient to the database'
+parameters:
+  - in: 'formData'
+    name: 'email'
+    description: 'The email of the recipient'
+    required: true
+    type: 'string'
+responses:
+  201:
+    description: 'Success'
+  400:
+    description: 'Bad Request'
+  500:
+    description: 'Server Error'

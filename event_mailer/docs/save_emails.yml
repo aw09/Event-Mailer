@@ -1,0 +1,31 @@
+summary: 'Save new email'
+description: 'Save new email to the database'
+parameters:
+  - in: 'formData'
+    name: 'event_id'
+    type: 'integer'
+    required: true
+    description: 'Event ID that email relates to'
+  - in: 'formData'
+    name: 'email_subject'
+    type: 'string'
+    required: true
+    description: 'Subject of the email'
+  - in: 'formData'
+    name: 'email_content'
+    type: 'string'
+    required: true
+    description: 'Content of the email'
+  - in: 'formData'
+    name: 'timestamp'
+    type: 'string'
+    format: 'date-time'
+    required: true
+    description: 'Timestamp when the email will be sent. Format MM/DD/YY HH:MM:SS'
+responses:
+  201:
+    description: 'Success'
+  400:
+    description: 'Bad Request'
+  500:
+    description: 'Server Error'

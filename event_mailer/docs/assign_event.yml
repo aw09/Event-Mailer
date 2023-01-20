@@ -1,0 +1,31 @@
+summary: 'Assign event to recipient'
+description: 'Assign events to a recipient'
+parameters:
+  - in: 'formData'
+    name: 'recipient_id'
+    description: 'The id of the recipient'
+    required: true
+    type: 'integer'
+  - in: 'formData'
+    name: 'event_list'
+    description: 'Comma separated list of event ids'
+    required: true
+    type: 'string'
+responses:
+  201:
+    description: 'Success'
+    schema:
+      type: 'object'
+      properties:
+        recipient:
+          type: 'string'
+        event_list:
+          type: 'array'
+          items:
+            type: 'integer'
+  400:
+    description: 'Bad Request'
+  404:
+    description: 'Recipient not found'
+  500:
+    description: 'Server Error'

@@ -1,0 +1,7 @@
+summary: 'Get all recipient events'
+description: 'Retrieve all recipient events from the database'
+responses:
+  200:
+    description: 'Success'
+  500:
+    description: 'Server Error'

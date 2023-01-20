@@ -1,0 +1,7 @@
+summary: 'Get all emails'
+description: 'Retrieve all emails from the database'
+responses:
+  200:
+    description: 'Success'
+  500:
+    description: 'Server Error'
