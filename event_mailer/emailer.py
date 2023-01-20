@@ -6,7 +6,6 @@ import os
 from dotenv import load_dotenv
 
 def run_schedule(app):
-    stop_schedule = False
     load_dotenv()
 
     SENDER_EMAIL = os.getenv('SENDER_EMAIL')
@@ -32,6 +31,7 @@ def run_schedule(app):
 
 
         def run():
+            stop_schedule = False
             emails = db.session.query(Emails).filter(Emails.sent == False).all()
 
             # Add the emails and timestamps to the queue

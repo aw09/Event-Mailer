@@ -4,12 +4,15 @@ from flask import Flask
 from event_mailer.model import Emails, Recipients, RecipientEvents
 from event_mailer import app, db
 import pytest
-
+import os
 
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///testing.db'
+    os.environ['SENDER_EMAIL'] = 'sender@example.com'
+    os.environ['OAUTH_FILE'] = 'oauth.json'
+    os.environ['DB_FILE'] = 'testing.db'
     client = app.test_client()
 
     with app.app_context():

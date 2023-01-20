@@ -13,6 +13,9 @@ from datetime import datetime
 def client():
     app.config['TESTING'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///testing.db'
+    os.environ['SENDER_EMAIL'] = 'sender@example.com'
+    os.environ['OAUTH_FILE'] = 'oauth.json'
+    os.environ['DB_FILE'] = 'testing.db'
     with app.app_context():
         db.create_all()
         yield app
@@ -22,10 +25,6 @@ def client():
 
 
 def test_run_schedule_thread(client, mocker):
-    os.environ['SENDER_EMAIL'] = 'sender@example.com'
-    os.environ['OAUTH_FILE'] = 'oauth.json'
-    os.environ['DB_FILE'] = 'testing.db'
-
     mocker.patch('yagmail.SMTP')
     yagmail.SMTP.return_value.send.return_value = None
 
