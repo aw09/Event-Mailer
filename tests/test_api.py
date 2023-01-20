@@ -23,9 +23,23 @@ def client():
         db.drop_all()
 
 
-def test_hello_world(client):
+def test_get_emails(client):
+    response = client.get('/emails')
+    assert response.status_code == 200
+
+def test_get_recipients(client):
+    response = client.get('/recipients')
+    assert response.status_code == 200
+
+def test_get_recipient_events(client):
+    response = client.get('/recipient_events')
+    assert response.status_code == 200
+
+
+def test_redirect_dashboard(client):
     response = client.get('/')
-    assert b'Hello, World!' in response.data
+    assert response.status_code == 302
+
 
 def test_save_emails(client):
     data = {
@@ -66,4 +80,4 @@ def test_assign_event(client):
 
     result = json.loads(response.data)
     assert result['recipient'] == 'test@example.com'
-    assert result['event_list'] == ['1', '2', '3']
+    assert result['event_list'] == [1, 2, 3]

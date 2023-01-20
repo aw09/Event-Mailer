@@ -1,4 +1,4 @@
-from flask import request, jsonify, abort
+from flask import request, jsonify, redirect
 
 from .config import app, db, q
 from .model import Emails, Recipients, RecipientEvents, serialize
@@ -7,7 +7,7 @@ from flasgger.utils import swag_from
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return redirect('/apidocs')
 
 @swag_from('docs/get_emails.yml')
 @app.route("/emails", methods=["GET"])
@@ -76,6 +76,14 @@ def assign_event():
     if not recipient:
         return "Recipient ID not found", 404
 
+    user_events = db.session.query(RecipientEvents.event_id).filter(RecipientEvents.recipient_id == id).all()
+    user_events_id = []
+    for user_event in user_events:
+        user_events_id.append(user_event.event_id)
+    
+    # Remove event that already exist 
+    events = [x for x in events if int(x) not in user_events_id]
+
     new_list_recipient_event = []
     for event in events:
         new_recipient_event = RecipientEvents(
@@ -84,13 +92,20 @@ def assign_event():
         )
         new_list_recipient_event.append(new_recipient_event)
 
-    db.session.add_all(new_list_recipient_event)
-    db.session.commit()
+    if len(new_list_recipient_event) > 0:
+        db.session.add_all(new_list_recipient_event)
+        db.session.commit()
+
+    user_events = db.session.query(RecipientEvents.event_id).filter(RecipientEvents.recipient_id == id).all()
+
+    result_events_id = []
+    for user_event in user_events:
+        result_events_id.append(user_event.event_id)
 
     
     return jsonify({
         "recipient": recipient.email,
-        "event_list": events
+        "event_list": result_events_id
     })
 
 
