@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 
 def run_schedule(app):
+    stop_schedule = False
     load_dotenv()
 
     SENDER_EMAIL = os.getenv('SENDER_EMAIL')
@@ -51,6 +52,12 @@ def run_schedule(app):
                         sent = True
                     else:
                         q.put((timestamp, id, email_data))
+                
+                if not sent and stop_schedule:
+                    break
+
+                if app.config['TESTING']:
+                    stop_schedule = True
 
                 # If not sent check other email
                 if not sent:
