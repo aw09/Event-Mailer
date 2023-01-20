@@ -14,6 +14,7 @@ def run_schedule(app):
     with app.app_context():
         from .model import Emails, Recipients, RecipientEvents, serialize
         from .config import db, q
+        db.create_all()
 
         def send_email(email):
             receivers = db.session.query(Recipients.email).join(RecipientEvents).filter(
